@@ -26,9 +26,32 @@ def scrape_poems(poems_json, ids_json):
 
 
 def scrape_poem(poem_id):
-    soup = BeautifulSoup(requests.get('https://aconite26.livejournal.com/{}.html'.format(poem_id)).content, 'lxml')
+    source = 'https://aconite26.livejournal.com/{}.html'.format(poem_id)
+    soup = BeautifulSoup(requests.get(source).content, 'lxml')
+    poem = {
+        SOURCE: source,
+        WHEN: '',
+        WHERE: '',
+        TITLE: soup.find('span', {'class': 'aentry-post__title-text'}).text.strip()
+    }
+    add_fields(soup, poem)
+    return poem
+
+
+def get_text(soup):
+    pass
+
+
+def add_fields(soup, poem):
+    user_tags = [item.text.strip() for item in soup.find('div', {'class': 'aentry-tags'}).find_all('a', href=True)]
+    if "poems in english" in user_tags:
+        poem[LANG] = ENG
+    else:
+        poem[LANG] = RUS
+    poem[IS_TANKA] = "танки по дороге" in user_tags
 
 
 if __name__ == '__main__':
-    scrape_ids(LJ_URLS_JSON)
-    scrape_poem('243689')
+    # scrape_ids(LJ_URLS_JSON)
+    # print(scrape_poem('242261'))
+    print(scrape_poem('240072'))
