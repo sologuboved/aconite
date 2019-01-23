@@ -5,69 +5,37 @@ from basic_operations import *
 from global_vars import *
 
 
-def scrape_ids(ids_json):
+@which_watch
+def scrape_from_main(lj_main_json):
     print("Scraping urls...")
-    ids = list()
+    from_main = list()
     basic_url = 'https://aconite26.livejournal.com/?skip={}&tag=стихи'
     step = 0
     while True:
-        print("Step {}, {} urls so far".format(step, len(ids)))
+        print("Step {}, {} urls so far".format(step, len(from_main)))
         page = BeautifulSoup(requests.get(basic_url.format(step)).content,
-                             'lxml').find_all('li', {'class': "asset-meta-likus item"})
+                             'lxml').find_all('h2', {'class': "asset-name page-header2"})
         if not page:
-            dump_utf_json(ids, ids_json)
+            dump_utf_json(from_main, lj_main_json)
             return
         for item in page:
-            ids.append(item.get('lj-likus-item'))
+            link = item.find('a', href=True)
+            poem_datum = {SOURCE: link.get('href')}
+            title = link.text.strip()
+            if title == '***':
+                poem_datum.update({TITLE: str(), WHEN: str()})
+                from_main.append(poem_datum)
+                continue
+            when = title[-4:]
+            try:
+                int(when)
+            except ValueError:
+                when = str()
+            else:
+                title = str()
+            poem_datum.update({TITLE: title, WHEN: when})
+            from_main.append(poem_datum)
         step += 10
-
-
-@which_watch
-def scrape_poems(ids_json, poems_json):
-    poems = list()
-    suspicious = list()
-    poem_ids = load_utf_json(ids_json)
-    total = len(poem_ids)
-    count = 0
-    for poem_id in poem_ids:
-        count += 1
-        print("\r{} / {}: {}".format(count, total, poem_id), end='', flush=True)
-        poem = scrape_poem(poem_id)
-        if poem:
-            poems.append(poem)
-        else:
-            suspicious.append(poem_id)
-    dump_utf_json(poems, poems_json)
-
-
-def scrape_poem(poem_id):
-    source = 'https://aconite26.livejournal.com/{}.html'.format(poem_id)
-    soup = BeautifulSoup(requests.get(source).content, 'lxml')
-    try:
-        title = soup.find('span', {'class': 'aentry-post__title-text'}).text.strip()
-    except AttributeError:
-        title = str()
-    if title == 'Книга':
-        return
-    poem = {
-        SOURCE: source,
-        WHEN: str(),
-        WHERE: str(),
-        TITLE: title,
-        TEXT: get_text(soup)
-    }
-    add_lang_and_genre(soup, poem)
-    return poem
-
-
-def add_text_and_title(soup, poem):
-    raw_text = re.findall(r"Site\.page = (.+?\});\s+Site.page.template",
-                          str(soup.find_all('script', {'type': 'text/javascript'})[2]))[0]
-    # print(raw_text)
-    text = '\n\n'.join(
-        [item['text'].strip() for item in json.loads(raw_text)['content']['blocks'] if item['text'].strip()])
-    # print(repr(text))
-    poem[TEXT] = text
 
 
 def add_lang_and_genre(soup, poem):
@@ -80,7 +48,4 @@ def add_lang_and_genre(soup, poem):
 
 
 if __name__ == '__main__':
-    # scrape_ids(LJ_IDS_JSON)
-    # scrape_poem('242261')
-    # print(scrape_poem('240072'))
-    scrape_poems(LJ_IDS_JSON, LJ_POEMS_JSON)
+    scrape_from_main(LJ_MAIN_JSON)

@@ -1,5 +1,5 @@
 LJ_POEMS_JSON = 'lj_poems.json'
-LJ_IDS_JSON = 'lj_ids.json'
+LJ_MAIN_JSON = 'lj_main.json'
 
 TITLE = 'title'
 WHEN = 'when'
