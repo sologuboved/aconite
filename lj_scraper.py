@@ -48,6 +48,14 @@ def scrape_poem(poem):
         add_lang_and_genre(raw_poem, poem, False)
 
 
+def get_text(raw_poem):
+    pass
+
+
+def get_date():
+    pass
+
+
 def add_lang_and_genre(tureen, poem, b_type):
     if b_type:
         user_tags = list()
