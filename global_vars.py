@@ -12,6 +12,7 @@ SOURCE = 'source'
 TEXT = 'text'
 ORIGINAL_BY = 'original_by'
 ORIGINAL_LANG = 'original_lang'
+ORIGINAL_TITLE = 'original_title'
 
 ENG = 'eng'
 RUS = 'rus'

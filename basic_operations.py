@@ -4,6 +4,7 @@ import csv
 import os
 import sys
 import zipfile
+import random
 from functools import wraps
 
 
@@ -71,3 +72,27 @@ def delete_pid(pid_fname):
         os.remove(pid_fname)
     except FileNotFoundError as e:
         print(str(e))
+
+
+def check_json(fname):
+
+    def prettyprint(entry):
+        print()
+        for key, val in entry.items():
+            print("{}:     {}".format(key, val))
+        print('*********************************')
+
+    try:
+        entries = load_utf_json(fname)
+    except json.decoder.JSONDecodeError as e:
+        print("'Tis wrong:")
+        print(str(e))
+    else:
+        print("{}: {} entries".format(fname, len(entries)))
+        prettyprint(entries[0])
+        prettyprint(random.choice(entries[1: -1]))
+        prettyprint(entries[-1])
+
+
+if __name__ == '__main__':
+    check_json('lj_poems.json')
