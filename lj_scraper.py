@@ -104,10 +104,4 @@ def add_lang_and_genre(tureen, poem, b_type):
 
 
 if __name__ == '__main__':
-    # scrape_from_main(LJ_MAIN_JSON)
-    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/196677.html'})
-    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/78495.html'})
-    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/242261.html'})
-    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240072.html'})
-    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240813.html'})
     scrape_poems(LJ_MAIN_JSON, LJ_POEMS_JSON)

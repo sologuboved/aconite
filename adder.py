@@ -39,5 +39,5 @@ def duplicate_entry(source_json, target_json=None, **fields):
 
 
 if __name__ == '__main__':
-    # add_fields(LJ_POEMS_JSON, **{ORIGINAL_TITLE: str()})
-    duplicate_entry(LJ_POEMS_JSON, **{SOURCE: 'https://aconite26.livejournal.com/169053.html'})
+    add_fields(LJ_POEMS_JSON, **{WHERE: str()})
+    # duplicate_entry(LJ_POEMS_JSON, **{SOURCE: 'https://aconite26.livejournal.com/169053.html'})
