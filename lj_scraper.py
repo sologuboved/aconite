@@ -1,6 +1,6 @@
-import re
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 from basic_operations import *
 from global_vars import *
 
@@ -23,7 +23,7 @@ def scrape_from_main(lj_main_json):
             poem_datum = {SOURCE: link.get('href')}
             title = link.text.strip()
             if title == '***':
-                poem_datum.update({TITLE: str(), WHEN: str()})
+                poem_datum.update({TITLE: str(), YEAR: str()})
                 from_main.append(poem_datum)
                 continue
             when = title[-4:]
@@ -33,7 +33,7 @@ def scrape_from_main(lj_main_json):
                 when = str()
             else:
                 title = str()
-            poem_datum.update({TITLE: title, WHEN: when})
+            poem_datum.update({TITLE: title, YEAR: when, })
             from_main.append(poem_datum)
         step += 10
 
@@ -42,18 +42,31 @@ def scrape_poem(poem):
     soup = BeautifulSoup(requests.get(poem[SOURCE]).content, 'lxml')
     raw_poem = soup.find('article', {'class': "b-singlepost-body entry-content e-content"})
     if raw_poem:
-        add_lang_and_genre(soup, poem, True)
+        tureen = soup
+        b_type = True
     else:
         raw_poem = soup.find('article', {'class': 'aentry'})
-        add_lang_and_genre(raw_poem, poem, False)
+        tureen = raw_poem
+        b_type = False
+    add_lang_and_genre(tureen, poem, b_type)
+    add_year(tureen, poem, b_type)
+    add_text(raw_poem, poem, b_type)
+    for fieldame in (MONTH, DAY):
+        poem[fieldame] = str()
 
 
-def get_text(raw_poem):
-    pass
+def add_text(raw_poem, poem, b_type):
+    if b_type:
+        pass
+    else:
+        pass
 
 
-def get_date():
-    pass
+def add_year(tureen, poem, b_type):
+    if b_type:
+        poem[YEAR] = tureen.find('time').find('a', href=True).text
+    else:
+        poem[YEAR] = str(datetime.strptime(tureen.find('time').text, "%B %d %Y, %H:%M").year)
 
 
 def add_lang_and_genre(tureen, poem, b_type):
@@ -75,6 +88,6 @@ def add_lang_and_genre(tureen, poem, b_type):
 if __name__ == '__main__':
     # scrape_from_main(LJ_MAIN_JSON)
     # scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/196677.html'})
-    scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/78495.html'})
+    # scrape_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/78495.html'})
     # scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/242261.html'})
-    # scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/240072.html'})
+    scrape_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240072.html'})
