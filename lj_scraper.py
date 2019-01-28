@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -38,7 +39,20 @@ def scrape_from_main(lj_main_json):
         step += 10
 
 
-def scrape_poem(poem):
+@which_watch
+def scrape_poems(lj_main_json, lj_poems_json):
+    poems = load_utf_json(lj_main_json)
+    total = len(poems)
+    count = 0
+    for poem in poems:
+        count += 1
+        print("\r{} / {}: {}".format(count, total, poem[SOURCE]), end='', flush=True)
+        update_poem(poem)
+    print('\nDumping...')
+    dump_utf_json(poems, lj_poems_json)
+
+
+def update_poem(poem):
     soup = BeautifulSoup(requests.get(poem[SOURCE]).content, 'lxml')
     raw_poem = soup.find('article', {'class': "b-singlepost-body entry-content e-content"})
     if raw_poem:
@@ -57,10 +71,13 @@ def scrape_poem(poem):
 
 
 def add_text(raw_poem, poem, b_type):
-    if b_type:
-        pass
-    else:
-        pass
+    raw_poem = BeautifulSoup(re.sub(r"<br ?/?>", '\n', str(raw_poem)), 'lxml')
+    if not b_type:
+        raw_poem = raw_poem.find('div', {'class': 'aentry-post__text'})
+    text = '\n\n'.join([paragraph.text.strip() for paragraph in raw_poem.find_all('p')])
+    if not text:
+        text = raw_poem.text
+    poem[TEXT] = text.strip()
 
 
 def add_year(tureen, poem, b_type):
@@ -87,8 +104,10 @@ def add_lang_and_genre(tureen, poem, b_type):
 
 
 if __name__ == '__main__':
-    scrape_from_main(LJ_MAIN_JSON)
-    # scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/196677.html'})
-    # scrape_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/78495.html'})
-    # scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/242261.html'})
-    # scrape_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240072.html'})
+    # scrape_from_main(LJ_MAIN_JSON)
+    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/196677.html'})
+    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/78495.html'})
+    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/242261.html'})
+    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240072.html'})
+    # update_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240813.html'})
+    scrape_poems(LJ_MAIN_JSON, LJ_POEMS_JSON)
