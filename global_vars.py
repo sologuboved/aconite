@@ -10,6 +10,8 @@ LANG = 'lang'
 IS_TANKA = 'is_tanka'
 SOURCE = 'source'
 TEXT = 'text'
+ORIGINAL_BY = 'original_by'
+ORIGINAL_LANG = 'original_lang'
 
 ENG = 'eng'
 RUS = 'rus'
