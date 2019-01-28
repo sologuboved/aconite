@@ -104,4 +104,5 @@ def add_lang_and_genre(tureen, poem, b_type):
 
 
 if __name__ == '__main__':
+    scrape_from_main(LJ_MAIN_JSON)
     scrape_poems(LJ_MAIN_JSON, LJ_POEMS_JSON)
