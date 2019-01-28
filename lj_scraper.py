@@ -26,14 +26,14 @@ def scrape_from_main(lj_main_json):
                 poem_datum.update({TITLE: str(), YEAR: str()})
                 from_main.append(poem_datum)
                 continue
-            when = title[-4:]
+            year = title[-4:]
             try:
-                int(when)
+                int(year)
             except ValueError:
-                when = str()
+                year = str()
             else:
                 title = str()
-            poem_datum.update({TITLE: title, YEAR: when, })
+            poem_datum.update({TITLE: title, YEAR: year})
             from_main.append(poem_datum)
         step += 10
 
@@ -48,9 +48,10 @@ def scrape_poem(poem):
         raw_poem = soup.find('article', {'class': 'aentry'})
         tureen = raw_poem
         b_type = False
-    add_lang_and_genre(tureen, poem, b_type)
-    add_year(tureen, poem, b_type)
     add_text(raw_poem, poem, b_type)
+    add_lang_and_genre(tureen, poem, b_type)
+    if not poem[YEAR]:
+        add_year(tureen, poem, b_type)
     for fieldame in (MONTH, DAY):
         poem[fieldame] = str()
 
@@ -86,8 +87,8 @@ def add_lang_and_genre(tureen, poem, b_type):
 
 
 if __name__ == '__main__':
-    # scrape_from_main(LJ_MAIN_JSON)
+    scrape_from_main(LJ_MAIN_JSON)
     # scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/196677.html'})
     # scrape_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/78495.html'})
     # scrape_poem({TITLE: '', WHEN: '', SOURCE: 'https://aconite26.livejournal.com/242261.html'})
-    scrape_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240072.html'})
+    # scrape_poem({TITLE: '', YEAR: '', SOURCE: 'https://aconite26.livejournal.com/240072.html'})
