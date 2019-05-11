@@ -1,5 +1,4 @@
 from basic_operations import load_utf_json, dump_utf_json
-from global_vars import *
 
 
 def add_fields(source_json, target_json=None, **fields):
